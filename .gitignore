@@ -1,0 +1,9 @@
+target/
+*~
+*.swp
+*.swo
+main.rs
+
+# JetBrains tools
+.idea
+*.iml
