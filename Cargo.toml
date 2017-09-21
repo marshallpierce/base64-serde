@@ -1,6 +1,7 @@
 [package]
 name = "base64-serde"
 version = "0.1.0"
+description = "Integration between rust-base64 and serde"
 authors = ["Marshall Pierce <marshall@mpierce.org>"]
 homepage = "https://github.com/marshallpierce/base64-serde"
 repository = "https://github.com/marshallpierce/base64-serde"
