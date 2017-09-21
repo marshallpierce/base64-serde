@@ -2,6 +2,12 @@
 name = "base64-serde"
 version = "0.1.0"
 authors = ["Marshall Pierce <marshall@mpierce.org>"]
+homepage = "https://github.com/marshallpierce/base64-serde"
+repository = "https://github.com/marshallpierce/base64-serde"
+readme = 'README.md'
+keywords = ["base64", "serde"]
+categories = ["encoding"]
+license-file = "LICENSE.txt"
 
 [dependencies]
 base64 = "0.6.0"
