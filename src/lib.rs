@@ -20,8 +20,22 @@ macro_rules! base64_serde_type {
 
             pub fn deserialize<'de, D>(deserializer: D) -> Result<Vec<u8>, D::Error>
                 where D: $crate::Deserializer<'de> {
-                let s = <&str>::deserialize(deserializer)?;
-                $crate::decode_config(s, $config).map_err($crate::de::Error::custom)
+                struct Base64Visitor;
+
+                impl<'de> $crate::de::Visitor<'de> for Base64Visitor {
+                    type Value = Vec<u8>;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                        write!(formatter, "base64 ASCII text")
+                    }
+
+                    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E> where
+                            E: $crate::de::Error, {
+                        $crate::decode_config(v, $config).map_err($crate::de::Error::custom)
+                    }
+                }
+
+                deserializer.deserialize_str(Base64Visitor)
             }
         }
     }
