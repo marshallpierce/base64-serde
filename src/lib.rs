@@ -17,6 +17,13 @@ pub use base64::{encode_config, decode_config};
 macro_rules! base64_serde_type {
     ($typename:ident, $config:expr) => {
         enum $typename {}
+        base64_serde_type!(impl_only, $typename, $config);
+    };
+    (pub $typename:ident, $config:expr) => {
+        pub enum $typename {}
+        base64_serde_type!(impl_only, $typename, $config);
+    };
+    (impl_only, $typename:ident, $config:expr) => {
         impl $typename {
             pub fn serialize<S>(bytes: &[u8], serializer: S) -> Result<S::Ok, S::Error>
                 where S: $crate::Serializer {
@@ -43,5 +50,5 @@ macro_rules! base64_serde_type {
                 deserializer.deserialize_str(Base64Visitor)
             }
         }
-    }
+    };
 }
