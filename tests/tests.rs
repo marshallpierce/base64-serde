@@ -10,15 +10,39 @@ use base64::{encode_config, STANDARD};
 
 base64_serde_type!(Base64Standard, STANDARD);
 
+mod some_other_mod {
+    use base64::{STANDARD};
+
+    base64_serde_type!(pub Base64StandardInModule, STANDARD);
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 struct ByteHolder {
     #[serde(with = "Base64Standard")]
     bytes: Vec<u8>,
 }
 
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+struct ByteHolderHelperInMod {
+    #[serde(with = "some_other_mod::Base64StandardInModule")]
+    bytes: Vec<u8>,
+}
+
 #[test]
 fn serde_with_type() {
     let b = ByteHolder { bytes: vec![0x00, 0x77, 0xFF] };
+
+    let s = serde_json::to_string(&b).unwrap();
+    let expected = format!("{{\"bytes\":\"{}\"}}", encode_config(&b.bytes, STANDARD));
+    assert_eq!(expected, s);
+
+    let b2 = serde_json::from_str(&s).unwrap();
+    assert_eq!(b, b2);
+}
+
+#[test]
+fn serde_with_type_using_public_helper() {
+    let b = ByteHolderHelperInMod { bytes: vec![0x00, 0x77, 0xFF] };
 
     let s = serde_json::to_string(&b).unwrap();
     let expected = format!("{{\"bytes\":\"{}\"}}", encode_config(&b.bytes, STANDARD));
