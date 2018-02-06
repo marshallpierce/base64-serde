@@ -1,3 +1,7 @@
+# 0.3.0
+
+- Bumped the `base64` dependency version
+
 # 0.2.0
 
 - Add ability to make the generated type `pub`
