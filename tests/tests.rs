@@ -22,6 +22,12 @@ struct ByteHolder {
     bytes: Vec<u8>,
 }
 
+#[derive(Debug, PartialEq, Serialize)]
+struct SliceHolder<'a> {
+    #[serde(with = "Base64Standard")]
+    bytes: &'a[u8],
+}
+
 #[derive(Debug, PartialEq, Serialize, Deserialize)]
 struct ByteHolderHelperInMod {
     #[serde(with = "some_other_mod::Base64StandardInModule")]
@@ -38,6 +44,16 @@ fn serde_with_type() {
 
     let b2 = serde_json::from_str(&s).unwrap();
     assert_eq!(b, b2);
+}
+
+#[test]
+fn serialize_with_u8_slice() {
+    let bytes = vec![0x00, 0x77, 0xFF];
+    let b = SliceHolder { bytes: &bytes };
+
+    let s = serde_json::to_string(&b).unwrap();
+    let expected = format!("{{\"bytes\":\"{}\"}}", encode_config(&b.bytes, STANDARD));
+    assert_eq!(expected, s);
 }
 
 #[test]
