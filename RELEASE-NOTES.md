@@ -1,3 +1,7 @@
+# 0.3.1
+
+- Bumped `base64` and `serde` versions
+
 # 0.3.0
 
 - Bumped the `base64` dependency version
