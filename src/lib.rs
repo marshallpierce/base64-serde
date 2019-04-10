@@ -29,12 +29,12 @@ macro_rules! base64_serde_type {
     };
     (impl_only, $typename:ident, $config:expr) => {
         impl $typename {
-            pub fn serialize<S>(bytes: &[u8], serializer: S) -> Result<S::Ok, S::Error>
+            pub fn serialize<S>(bytes: &[u8], serializer: S) -> ::std::result::Result<S::Ok, S::Error>
                 where S: $crate::Serializer {
                 serializer.serialize_str(&$crate::encode_config(bytes, $config))
             }
 
-            pub fn deserialize<'de, D>(deserializer: D) -> Result<Vec<u8>, D::Error>
+            pub fn deserialize<'de, D>(deserializer: D) -> ::std::result::Result<Vec<u8>, D::Error>
                 where D: $crate::Deserializer<'de> {
                 struct Base64Visitor;
 
@@ -45,7 +45,7 @@ macro_rules! base64_serde_type {
                         write!(formatter, "base64 ASCII text")
                     }
 
-                    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E> where
+                    fn visit_str<E>(self, v: &str) -> ::std::result::Result<Self::Value, E> where
                             E: $crate::de::Error, {
                         $crate::decode_config(v, $config).map_err($crate::de::Error::custom)
                     }
