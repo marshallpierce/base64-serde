@@ -1,3 +1,7 @@
+# 0.4.0
+
+- Use `base64` 0.11.0
+
 # 0.3.1
 
 - Bumped `base64` and `serde` versions
