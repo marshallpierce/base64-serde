@@ -1,3 +1,8 @@
+# 0.5.0
+
+- Use `base64` 0.12.0
+- Use `serde` (and related crates) 1.0.104 
+
 # 0.4.0
 
 - Use `base64` 0.11.0
