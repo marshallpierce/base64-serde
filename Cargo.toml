@@ -12,7 +12,7 @@ categories = ["encoding"]
 license-file = "LICENSE.txt"
 
 [dependencies]
-base64 = "0.11.0"
+base64 = "0.12.0"
 serde = "1.0.85"
 
 [dev-dependencies]
