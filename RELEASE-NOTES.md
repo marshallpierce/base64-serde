@@ -1,3 +1,7 @@
+# 0.6.0
+
+- Now deserializer works with any output type that implements `From<Vec<u8>>`
+
 # 0.5.0
 
 - Use `base64` 0.12.0
