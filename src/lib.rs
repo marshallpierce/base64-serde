@@ -29,9 +29,12 @@ macro_rules! base64_serde_type {
     };
     (impl_only, $typename:ident, $config:expr) => {
         impl $typename {
-            pub fn serialize<S>(bytes: &[u8], serializer: S) -> ::std::result::Result<S::Ok, S::Error>
-                where S: $crate::Serializer {
-                serializer.serialize_str(&$crate::encode_config(bytes, $config))
+            pub fn serialize<S, Input>(bytes: Input, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
+                where
+                    S: $crate::Serializer,
+                    Input: AsRef<[u8]>
+            {
+                serializer.serialize_str(&$crate::encode_config(bytes.as_ref(), $config))
             }
 
             pub fn deserialize<'de, D, Output>(deserializer: D) -> ::std::result::Result<Output, D::Error>
