@@ -2,9 +2,9 @@ extern crate base64;
 extern crate serde;
 
 #[doc(hidden)]
-pub use serde::{Deserializer, de, Serializer};
+pub use base64::{decode_config, encode_config};
 #[doc(hidden)]
-pub use base64::{encode_config, decode_config};
+pub use serde::{de, Deserializer, Serializer};
 
 /// Create a type with appropriate `serialize` and `deserialize` functions to use with
 /// serde when specifying how to serialize a particular field.
@@ -29,35 +29,47 @@ macro_rules! base64_serde_type {
     };
     (impl_only, $typename:ident, $config:expr) => {
         impl $typename {
-            pub fn serialize<S, Input>(bytes: Input, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
-                where
-                    S: $crate::Serializer,
-                    Input: AsRef<[u8]>
+            pub fn serialize<S, Input>(
+                bytes: Input,
+                serializer: S,
+            ) -> ::std::result::Result<S::Ok, S::Error>
+            where
+                S: $crate::Serializer,
+                Input: AsRef<[u8]>,
             {
                 serializer.serialize_str(&$crate::encode_config(bytes.as_ref(), $config))
             }
 
-            pub fn deserialize<'de, D, Output>(deserializer: D) -> ::std::result::Result<Output, D::Error>
-                where 
-                    D: $crate::Deserializer<'de>,
-                    Output: From<Vec<u8>>
+            pub fn deserialize<'de, D, Output>(
+                deserializer: D,
+            ) -> ::std::result::Result<Output, D::Error>
+            where
+                D: $crate::Deserializer<'de>,
+                Output: From<Vec<u8>>,
             {
                 struct Base64Visitor;
 
                 impl<'de> $crate::de::Visitor<'de> for Base64Visitor {
                     type Value = Vec<u8>;
 
-                    fn expecting(&self, formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+                    fn expecting(
+                        &self,
+                        formatter: &mut ::std::fmt::Formatter,
+                    ) -> ::std::fmt::Result {
                         write!(formatter, "base64 ASCII text")
                     }
 
-                    fn visit_str<E>(self, v: &str) -> ::std::result::Result<Self::Value, E> where
-                            E: $crate::de::Error, {
+                    fn visit_str<E>(self, v: &str) -> ::std::result::Result<Self::Value, E>
+                    where
+                        E: $crate::de::Error,
+                    {
                         $crate::decode_config(v, $config).map_err($crate::de::Error::custom)
                     }
                 }
 
-                deserializer.deserialize_str(Base64Visitor).map(|vec| Output::from(vec))
+                deserializer
+                    .deserialize_str(Base64Visitor)
+                    .map(|vec| Output::from(vec))
             }
         }
     };
