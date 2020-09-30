@@ -1,6 +1,6 @@
 [package]
 name = "base64-serde"
-version = "0.6.0"
+version = "0.6.1"
 description = "Integration between rust-base64 and serde"
 authors = ["Marshall Pierce <marshall@mpierce.org>"]
 homepage = "https://github.com/marshallpierce/base64-serde"
@@ -13,7 +13,7 @@ categories = ["encoding"]
 license = "Apache-2.0"
 
 [dependencies]
-base64 = "0.12.3"
+base64 = "0.13.0"
 serde = "1.0.116"
 
 [dev-dependencies]

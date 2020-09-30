@@ -1,3 +1,7 @@
+# 0.6.1
+
+- Use `base64` 0.13.0
+
 # 0.6.0
 
 - Now serializer works with any input type that implements `AsRef<[u8]>`
