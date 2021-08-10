@@ -4,4 +4,4 @@ This project provides a way to use [rust-base64](https://github.com/alicemaz/rus
 
 For a running example, see the [integration tests](/tests/tests.rs).
 
-The project is dual licensed under your preference of COIL 0.5 or Apache 2.0.
+The project is dual licensed under your preference of COIL 0.6 or Apache 2.0.

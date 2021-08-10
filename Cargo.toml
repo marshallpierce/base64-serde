@@ -9,7 +9,7 @@ documentation = "https://docs.rs/base64-serde/"
 readme = 'README.md'
 keywords = ["base64", "serde"]
 categories = ["encoding"]
-# Dual licensed COIL 0.5 and Apache 2.0, but Cargo doesn't know how to represent that
+# Dual licensed COIL 0.6 and Apache 2.0, but Cargo doesn't know how to represent that
 license = "Apache-2.0"
 
 [dependencies]
