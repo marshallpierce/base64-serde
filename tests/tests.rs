@@ -1,47 +1,43 @@
-#[macro_use]
-extern crate base64_serde;
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
-extern crate base64;
-extern crate serde_json;
+#![allow(clippy::box_collection)]
 
-use base64::{encode_config, STANDARD};
+use base64_serde::base64_serde_type;
+use base64::{engine::general_purpose::STANDARD, Engine};
 use std::cell::RefCell;
 
 base64_serde_type!(Base64Standard, STANDARD);
 
 mod some_other_mod {
-    use base64::STANDARD;
+    use base64::engine::general_purpose::STANDARD;
+    use base64_serde::base64_serde_type;
 
     base64_serde_type!(pub Base64StandardInModule, STANDARD);
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 struct ByteHolder {
     #[serde(with = "Base64Standard")]
     bytes: Vec<u8>,
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, PartialEq, serde::Deserialize)]
 struct BoxVecHolder {
     #[serde(with = "Base64Standard")]
     bytes: Box<Vec<u8>>,
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
+#[derive(Debug, PartialEq, serde::Deserialize)]
 struct RefCellVecHolder {
     #[serde(with = "Base64Standard")]
     bytes: RefCell<Vec<u8>>,
 }
 
-#[derive(Debug, PartialEq, Serialize)]
+#[derive(Debug, PartialEq, serde::Serialize)]
 struct SliceHolder<'a> {
     #[serde(with = "Base64Standard")]
     bytes: &'a [u8],
 }
 
-#[derive(Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, serde::Serialize, serde::Deserialize)]
 struct ByteHolderHelperInMod {
     #[serde(with = "some_other_mod::Base64StandardInModule")]
     bytes: Vec<u8>,
@@ -54,7 +50,7 @@ fn serde_with_type() {
     };
 
     let s = serde_json::to_string(&b).unwrap();
-    let expected = format!("{{\"bytes\":\"{}\"}}", encode_config(&b.bytes, STANDARD));
+    let expected = format!("{{\"bytes\":\"{}\"}}", STANDARD.encode(&b.bytes));
     assert_eq!(expected, s);
 
     let b2 = serde_json::from_str(&s).unwrap();
@@ -67,10 +63,7 @@ fn deserialize_with_box_vec() {
         bytes: Box::new(vec![0x00, 0x77, 0xFF]),
     };
 
-    let json = format!(
-        "{{\"bytes\":\"{}\"}}",
-        encode_config(&b.bytes.as_slice(), STANDARD)
-    );
+    let json = format!("{{\"bytes\":\"{}\"}}", STANDARD.encode(b.bytes.as_slice()));
 
     let b2 = serde_json::from_str(&json).unwrap();
     assert_eq!(b, b2);
@@ -84,7 +77,7 @@ fn deserialize_with_refcell() {
 
     let expected = format!(
         "{{\"bytes\":\"{}\"}}",
-        encode_config(&b.bytes.borrow().as_slice(), STANDARD)
+        STANDARD.encode(b.bytes.borrow().as_slice())
     );
 
     let b2 = serde_json::from_str(&expected).unwrap();
@@ -97,7 +90,7 @@ fn serialize_with_u8_slice() {
     let b = SliceHolder { bytes: &bytes };
 
     let s = serde_json::to_string(&b).unwrap();
-    let expected = format!("{{\"bytes\":\"{}\"}}", encode_config(&b.bytes, STANDARD));
+    let expected = format!("{{\"bytes\":\"{}\"}}", STANDARD.encode(b.bytes));
     assert_eq!(expected, s);
 }
 
@@ -108,7 +101,7 @@ fn serde_with_type_using_public_helper() {
     };
 
     let s = serde_json::to_string(&b).unwrap();
-    let expected = format!("{{\"bytes\":\"{}\"}}", encode_config(&b.bytes, STANDARD));
+    let expected = format!("{{\"bytes\":\"{}\"}}", STANDARD.encode(&b.bytes));
     assert_eq!(expected, s);
 
     let b2 = serde_json::from_str(&s).unwrap();

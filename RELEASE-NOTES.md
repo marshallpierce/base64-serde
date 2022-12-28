@@ -1,3 +1,9 @@
+# 0.7.0-beta.1
+
+- Update to base64 0.21.0-beta.1
+- Update to serde 1.0.152
+- The `base64_serde_type` macro now uses an `Engine` instead of `Config` because that's how base64 0.20+ works.
+
 # 0.6.1
 
 - Use `base64` 0.13.0

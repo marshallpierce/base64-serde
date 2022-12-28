@@ -2,32 +2,58 @@ extern crate base64;
 extern crate serde;
 
 #[doc(hidden)]
-pub use base64::{decode_config, encode_config};
-#[doc(hidden)]
 pub use serde::{de, Deserializer, Serializer};
 
 /// Create a type with appropriate `serialize` and `deserialize` functions to use with
 /// serde when specifying how to serialize a particular field.
 ///
-/// If you wanted to use the `URL_SAFE_NO_PAD` configuration, for instance, then you might have
-/// `base64_serde_type!(Base64UrlSafeNoPad, URL_SAFE_NO_PAD)` in your code to declare the type, and
-/// then use `#[serde(with = "Base64UrlSafeNoPad")]` on a `Vec<u8>` field that you wished to
-/// serialize to base64 or deserialize from base64.
+/// Once the type is defined, you can use `#[serde(with = "YourTypeNameHere")]` on a `Vec<u8>`
+/// field that you wished to serialize to base64 or deserialize from base64.
 ///
 /// If you want the resulting type to be public, prefix the desired type name with `pub`, as in:
 ///
-/// `base64_serde_type!(pub IWillBeAPublicType, URL_SAFE_NO_PAD)`
+/// `base64_serde_type!(pub IWillBeAPublicType, YourPreferredEngine)`
+///
+/// # Examples
+///
+/// Existing engine:
+///
+/// ```
+/// use base64_serde::base64_serde_type;
+///
+/// base64_serde_type!(Base64Standard, base64::engine::general_purpose::STANDARD);
+///
+/// #[derive(serde::Serialize, serde::Deserialize)]
+/// struct ByteHolder {
+///     #[serde(with = "Base64Standard")]
+///     bytes: Vec<u8>,
+/// }
+/// ```
+///
+/// Custom engine:
+///
+/// ```
+/// use base64_serde::base64_serde_type;
+///
+/// const BCRYPT_NO_PAD: base64::engine::GeneralPurpose =
+///     base64::engine::GeneralPurpose::new(
+///         &base64::alphabet::BCRYPT,
+///         base64::engine::general_purpose::NO_PAD
+///     );
+///
+/// base64_serde_type!(Base64BcryptNoPad, BCRYPT_NO_PAD);
+/// ```
 #[macro_export]
 macro_rules! base64_serde_type {
-    ($typename:ident, $config:expr) => {
+    ($typename:ident, $engine:expr) => {
         enum $typename {}
-        base64_serde_type!(impl_only, $typename, $config);
+        base64_serde_type!(impl_only, $typename, $engine);
     };
-    (pub $typename:ident, $config:expr) => {
+    (pub $typename:ident, $engine:expr) => {
         pub enum $typename {}
-        base64_serde_type!(impl_only, $typename, $config);
+        base64_serde_type!(impl_only, $typename, $engine);
     };
-    (impl_only, $typename:ident, $config:expr) => {
+    (impl_only, $typename:ident, $engine:expr) => {
         impl $typename {
             pub fn serialize<S, Input>(
                 bytes: Input,
@@ -37,7 +63,8 @@ macro_rules! base64_serde_type {
                 S: $crate::Serializer,
                 Input: AsRef<[u8]>,
             {
-                serializer.serialize_str(&$crate::encode_config(bytes.as_ref(), $config))
+                use base64::Engine as _;
+                serializer.serialize_str(&$engine.encode(bytes.as_ref()))
             }
 
             pub fn deserialize<'de, D, Output>(
@@ -63,7 +90,8 @@ macro_rules! base64_serde_type {
                     where
                         E: $crate::de::Error,
                     {
-                        $crate::decode_config(v, $config).map_err($crate::de::Error::custom)
+                        use base64::Engine as _;
+                        $engine.decode(v).map_err($crate::de::Error::custom)
                     }
                 }
 
