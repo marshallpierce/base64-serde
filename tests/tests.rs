@@ -1,7 +1,7 @@
 #![allow(clippy::box_collection)]
 
-use base64_serde::base64_serde_type;
 use base64::{engine::general_purpose::STANDARD, Engine};
+use base64_serde::base64_serde_type;
 use std::cell::RefCell;
 
 base64_serde_type!(Base64Standard, STANDARD);

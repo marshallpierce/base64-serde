@@ -1,3 +1,7 @@
+# 0.7.0-beta.2
+
+- Update to base64 0.21.0-beta.2
+
 # 0.7.0-beta.1
 
 - Update to base64 0.21.0-beta.1

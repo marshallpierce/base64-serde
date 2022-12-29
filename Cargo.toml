@@ -1,6 +1,6 @@
 [package]
 name = "base64-serde"
-version = "0.7.0-beta.1"
+version = "0.7.0-beta.2"
 description = "Integration between rust-base64 and serde"
 authors = ["Marshall Pierce <marshall@mpierce.org>"]
 homepage = "https://github.com/marshallpierce/base64-serde"
@@ -15,7 +15,7 @@ rust-version = "1.57.0"
 edition = "2021"
 
 [dependencies]
-base64 = "0.21.0-beta.1"
+base64 = "0.21.0-beta.2"
 serde = "1.0.152"
 
 [dev-dependencies]
