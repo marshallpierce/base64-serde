@@ -10,9 +10,15 @@ pub use serde::{de, Deserializer, Serializer};
 /// Once the type is defined, you can use `#[serde(with = "YourTypeNameHere")]` on a `Vec<u8>`
 /// field that you wished to serialize to base64 or deserialize from base64.
 ///
-/// If you want the resulting type to be public, prefix the desired type name with `pub`, as in:
+/// If you want to change resulting type's visibility, prefix the desired type
+/// name with appropiate visibility, for example:
 ///
-/// `base64_serde_type!(pub IWillBeAPublicType, YourPreferredEngine)`
+/// ```
+/// use base64_serde::base64_serde_type;
+///
+/// base64_serde_type!(pub IWillBeAPublicType, base64::engine::general_purpose::STANDARD);
+/// base64_serde_type!(pub(crate) IWillBeACrateType, base64::engine::general_purpose::STANDARD);
+/// ```
 ///
 /// # Examples
 ///
@@ -45,12 +51,8 @@ pub use serde::{de, Deserializer, Serializer};
 /// ```
 #[macro_export]
 macro_rules! base64_serde_type {
-    ($typename:ident, $engine:expr) => {
-        enum $typename {}
-        base64_serde_type!(impl_only, $typename, $engine);
-    };
-    (pub $typename:ident, $engine:expr) => {
-        pub enum $typename {}
+    ($visibility:vis $typename:ident, $engine:expr) => {
+        $visibility enum $typename {}
         base64_serde_type!(impl_only, $typename, $engine);
     };
     (impl_only, $typename:ident, $engine:expr) => {
