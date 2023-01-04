@@ -1,3 +1,8 @@
+# 0.7.0-rc.1
+
+- Use base64 0.21.0-rc.1
+- Support visibilities other than `pub`, e.g. `pub(crate)`
+
 # 0.7.0-beta.2
 
 - Update to base64 0.21.0-beta.2

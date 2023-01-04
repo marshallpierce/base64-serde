@@ -4,13 +4,13 @@ version = 3
 
 [[package]]
 name = "base64"
-version = "0.21.0-beta.2"
+version = "0.21.0-rc.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0547ed923c8857baee67fa8d9f2b4de4ad63863bd4b774689af8987cc9bfc8c5"
+checksum = "339eb223c8f495cef5b03f1727754538a468edaeba28bab0886ecadca774a3b7"
 
 [[package]]
 name = "base64-serde"
-version = "0.7.0-beta.2"
+version = "0.7.0-rc.1"
 dependencies = [
  "base64",
  "serde",
