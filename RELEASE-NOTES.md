@@ -1,3 +1,9 @@
+# 0.8.0
+
+- Don't depend on `base64` and `serde` directly; instead, assume the consumer of the library is going to already have
+  them available. This avoids the need to do version bumps in this project, and should hopefully be a no op for common
+  usage, since any usage I can think of would already be using dependencies independently.
+
 # 0.7.0-rc.1
 
 - Use base64 0.21.0-rc.1
@@ -25,7 +31,7 @@
 # 0.5.0
 
 - Use `base64` 0.12.0
-- Use `serde` (and related crates) 1.0.104 
+- Use `serde` (and related crates) 1.0.104
 
 # 0.4.0
 
