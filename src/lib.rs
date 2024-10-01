@@ -1,9 +1,3 @@
-extern crate base64;
-extern crate serde;
-
-#[doc(hidden)]
-pub use serde::{de, Deserializer, Serializer};
-
 /// Create a type with appropriate `serialize` and `deserialize` functions to use with
 /// serde when specifying how to serialize a particular field.
 ///
@@ -62,7 +56,7 @@ macro_rules! base64_serde_type {
                 serializer: S,
             ) -> ::std::result::Result<S::Ok, S::Error>
             where
-                S: $crate::Serializer,
+                S: serde::Serializer,
                 Input: AsRef<[u8]>,
             {
                 use base64::Engine as _;
@@ -73,12 +67,12 @@ macro_rules! base64_serde_type {
                 deserializer: D,
             ) -> ::std::result::Result<Output, D::Error>
             where
-                D: $crate::Deserializer<'de>,
+                D: serde::Deserializer<'de>,
                 Output: From<Vec<u8>>,
             {
                 struct Base64Visitor;
 
-                impl<'de> $crate::de::Visitor<'de> for Base64Visitor {
+                impl<'de> serde::de::Visitor<'de> for Base64Visitor {
                     type Value = Vec<u8>;
 
                     fn expecting(
@@ -90,10 +84,10 @@ macro_rules! base64_serde_type {
 
                     fn visit_str<E>(self, v: &str) -> ::std::result::Result<Self::Value, E>
                     where
-                        E: $crate::de::Error,
+                        E: serde::de::Error,
                     {
                         use base64::Engine as _;
-                        $engine.decode(v).map_err($crate::de::Error::custom)
+                        $engine.decode(v).map_err(serde::de::Error::custom)
                     }
                 }
 
